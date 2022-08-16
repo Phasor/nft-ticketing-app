@@ -15,6 +15,7 @@ contract Event is ERC721 {
     uint256 public maxNumOfTickets;
     uint256 public ticketPrice;
     address public owner;
+    string public eventName;
 
     mapping(uint256 => bool) public redeemedTickets;
 
@@ -46,11 +47,12 @@ contract Event is ERC721 {
         ticketPrice = _ticketPrice;
         owner = _owner;
         eventImageURL = _eventImageURL;
+        eventName = _eventName;
     }
 
     function mint() external payable returns (bool) {
         require(ticketCounter.current() < maxNumOfTickets, "sold out");
-        require(msg.value == ticketPrice, "incorrect amount paid");
+        require(msg.value >= ticketPrice, "Eth sent is less than ticket price");
 
         ticketCounter.increment();
 
@@ -63,25 +65,18 @@ contract Event is ERC721 {
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId),"URI query for nonexistent token");
+    require(_exists(tokenId),"URI query for nonexistent token");
+    return eventImageURL;
+    }
+
+    function setTokenURI(string memory _eventImageURL ) public onlyOwner returns (string memory) {
+        eventImageURL = _eventImageURL;
         return eventImageURL;
     }
 
     function remainingTickets() external view returns (uint256) {
         return maxNumOfTickets - ticketCounter.current();
     }
-
-    // function getEventDetails() external view returns (EventDetails memory) {
-    //     EventDetails memory e = EventDetails(
-    //         name(),
-    //         dateOfEvent,
-    //         address(this),
-    //         owner,
-    //         ticketPrice,
-    //         location
-    //     );
-    //     return e;
-    // }
 
     function verifyTicket(
         uint256 _id,

@@ -7,6 +7,7 @@ contract EventContractFactory {
     address public admin;
 
     mapping(address => bool) public events;
+    address[] public eventAddresses;
 
     uint256 public fee;
 
@@ -26,7 +27,8 @@ contract EventContractFactory {
         string memory _location,
         uint256 _dateOfEvent,
         uint256 _maxNumOfTickets,
-        uint256 _ticketPrice
+        uint256 _ticketPrice,
+        string memory _eventImageURL
     ) public payable {
         require(msg.value >= fee, "incorrect amount paid");
 
@@ -37,11 +39,13 @@ contract EventContractFactory {
                 _location,
                 _maxNumOfTickets,
                 _ticketPrice,
-                address(msg.sender)
+                address(msg.sender),
+                _eventImageURL
             )
         );
 
         events[eventAddress] = true;
+        eventAddresses.push(eventAddress);
 
         emit EventCreation(msg.sender, eventAddress, _eventName);
     }
