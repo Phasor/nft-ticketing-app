@@ -13,7 +13,7 @@ export interface FormData {
     numTickets?: string;
     location: string;
     price:string;
-    file?: File;
+    file?: FileList;
     checkbox?: boolean;
 }
 
@@ -37,7 +37,7 @@ export default function CreateEventForm() {
     const [eventContractAddress, setEventContractAddress] = useState('');
     const etherScanBase = 'https://ropsten.etherscan.io/tx/'
 
-    async function deployEvent(dataForm:any){
+    async function deployEvent(dataForm: FormData) {
         try {
             setIsLoading(true);
             setShowForm(false);
@@ -52,11 +52,16 @@ export default function CreateEventForm() {
             const passedYear = Number(`20${dataForm.eventDate.slice(6,8)}`);
             const date = new Date(passedYear,passedMonth,passedDay);
             const eventPrice = ethers.utils.parseEther(dataForm.price);
-            const image_IPFS_URL = await nftUpload(dataForm.file);
+            
+            console.log(`Image file type:${typeof(dataForm.file)}`);
+            const img = dataForm.file![0];
+            console.log(`img: ${img}`);
+            const metadata_URL = await uploadPicture(img);
+            
             console.log(`DateObj: ${date}`)
             const dateTime = date.getTime();
             console.log(`Datetime: ${dateTime}`);
-            const response = await factoryContract.createEvent(dataForm.eventName,dataForm.location,dateTime,Number(dataForm.numTickets),eventPrice, {value: costToDeployEvent});
+            const response = await factoryContract.createEvent(dataForm.eventName,dataForm.location,dateTime,Number(dataForm.numTickets),eventPrice,metadata_URL, {value: costToDeployEvent});
             console.log("Awaiting confirmations...");
             const receipt = await response.wait(1);
             console.log("Mined.");
@@ -73,19 +78,19 @@ export default function CreateEventForm() {
                 console.log("PARSED LOG:", parsedLog);
                 console.log(`Event contract address: ${parsedLog.args.contractAddress}`);
 
-                if (!dataForm.file) {
-                    throw new Error("Missing image")
-                }
+                // if (!dataForm.file) {
+                //     throw new Error("Missing image")
+                // }
 
-                const formData = new FormData();
-                formData.append("image", dataForm.file[0]);
+                // const formData = new FormData();
+                // formData.append("image", dataForm.file[0]);
         
-                const res = await fetch(`http://localhost:4000/events/${parsedLog.args.contractAddress}/image`, {
-                    method: "POST",
-                    body: formData,
-                }).then((res) => res.json());
+                // const res = await fetch(`http://localhost:4000/events/${parsedLog.args.contractAddress}/image`, {
+                //     method: "POST",
+                //     body: formData,
+                // }).then((res) => res.json());
 
-                console.log(res)
+                // console.log(res)
 
                 setEventContractAddress(parsedLog.args.contractAddress);
             });

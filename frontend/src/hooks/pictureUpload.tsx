@@ -1,16 +1,17 @@
 
-export async function uploadMetaData(_image: File) {
-    const { NFTStorage, File, Blob } = require('nft.storage');
-    const endpoint = 'https://api.nft.storage';
-    const token = process.env.REACT_APP_NFT_STORAGE_TOKEN;
+export async function uploadPicture(_image: File) {
+    const { NFTStorage, File } = require('nft.storage');
+    //const endpoint = 'https://api.nft.storage';
     var metadataURL = "";
-    //const EXTERNAL_URL = "https://www.mywebsite.com";
 
     try {
-        const storage = new NFTStorage({ endpoint, token });
-
-        const metadata = await storage.store({
-            image: new File([_image], 'eventImage.jpg', { type: 'image/jpg' }),
+        const client = new NFTStorage({ token: process.env.REACT_APP_NFT_STORAGE_TOKEN });
+        console.log(process.env.REACT_APP_NFT_STORAGE_TOKEN)
+        const imageFile = new File([ _image ], 'eventImage.jpg', { type: 'image/jpg' })
+        const metadata = await client.store({
+            name: "event image",
+            description: "This is the event image location on IPFS",
+            image: imageFile,
         })
 
         console.log('Metadata URL:', metadata.url);
@@ -22,4 +23,4 @@ export async function uploadMetaData(_image: File) {
     };
 }
 
-export default uploadMetaData;
+export default uploadPicture;
