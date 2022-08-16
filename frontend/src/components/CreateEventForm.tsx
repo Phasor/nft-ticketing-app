@@ -44,7 +44,7 @@ export default function CreateEventForm() {
             //register transfer event from smart contract
             factoryContract.removeAllListeners();
 
-            //depoy event, paying the protocol fee
+            //deploy event, paying the protocol fee
             const costToDeployEvent = await factoryContract.fee();
             console.log(`Fee is ${costToDeployEvent}`);
             const passedMonth = Number(dataForm.eventDate.slice(0,2));
@@ -53,15 +53,22 @@ export default function CreateEventForm() {
             const date = new Date(passedYear,passedMonth,passedDay);
             const eventPrice = ethers.utils.parseEther(dataForm.price);
             
-            console.log(`Image file type:${typeof(dataForm.file)}`);
+            //console.log(`Image file type:${typeof(dataForm.file)}`);
             const img = dataForm.file![0];
-            console.log(`img: ${img}`);
-            const metadata_URL = await uploadPicture(img);
+            //console.log(`img: ${img}`);
+            const raw_ipfs_URL = await uploadPicture(img);
+            //ipfs://bafyreife7ednjxeewhffvvn2onrox6qiu3dhbsle5sv4zznscjotwskbrm/metadata.json
+            const metaDataUrl = "https://nftstorage.link/ipfs/" + raw_ipfs_URL?.substring(7);
+            const metaData = await fetch(metaDataUrl).then(res => res.json());
+            const raw_image_url = metaData.image;
+            //"ipfs://bafybeihrbzeiyikg43qdgr3jwu6nuunfkdlupbdyebvafi7rwbctmuqv2a/eventImage.jpg"
+            const imageUrl = "https://nftstorage.link/ipfs/" + raw_image_url?.substring(7);
+            console.log(`imageUrl: ${imageUrl}`);
             
             console.log(`DateObj: ${date}`)
             const dateTime = date.getTime();
             console.log(`Datetime: ${dateTime}`);
-            const response = await factoryContract.createEvent(dataForm.eventName,dataForm.location,dateTime,Number(dataForm.numTickets),eventPrice,metadata_URL, {value: costToDeployEvent});
+            const response = await factoryContract.createEvent(dataForm.eventName,dataForm.location,dateTime,Number(dataForm.numTickets),eventPrice,imageUrl, {value: costToDeployEvent});
             console.log("Awaiting confirmations...");
             const receipt = await response.wait(1);
             console.log("Mined.");

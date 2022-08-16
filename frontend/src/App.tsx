@@ -13,7 +13,7 @@ import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 
 
-console.log(process.env.REACT_APP_NFT_STORAGE_TOKEN)
+//console.log(process.env.REACT_APP_NFT_STORAGE_TOKEN)
 
 
 
