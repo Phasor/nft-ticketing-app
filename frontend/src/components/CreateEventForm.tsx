@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import FactoryABI from '../FactoryABI.json';
 import { eventFactoryAddress } from '../eventFactoryContractAddress';
-import nftUpload from '../hooks/nftUpload';
+import uploadPicture from '../hooks/pictureUpload';
 
 export interface FormData {
     eventName: string;

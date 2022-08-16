@@ -2,6 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Event is ERC721 {
@@ -9,19 +10,11 @@ contract Event is ERC721 {
     Counters.Counter private ticketCounter;
 
     string public location;
+    string public eventImageURL;
     uint256 public dateOfEvent;
     uint256 public maxNumOfTickets;
     uint256 public ticketPrice;
     address public owner;
-
-    // struct EventDetails {
-    //     string name;
-    //     uint256 date;
-    //     address contractAddress;
-    //     address ownerAddress;
-    //     uint256 price;
-    //     string location;
-    // }
 
     mapping(uint256 => bool) public redeemedTickets;
 
@@ -44,13 +37,15 @@ contract Event is ERC721 {
         string memory _location,
         uint256 _maxNumOfTickets,
         uint256 _ticketPrice,
-        address _owner
+        address _owner,
+        string memory _eventImageURL
     ) ERC721(_eventName, "TICK") {
         dateOfEvent = _dateOfEvent;
         location = _location;
         maxNumOfTickets = _maxNumOfTickets;
         ticketPrice = _ticketPrice;
         owner = _owner;
+        eventImageURL = _eventImageURL;
     }
 
     function mint() external payable returns (bool) {
@@ -65,6 +60,11 @@ contract Event is ERC721 {
         emit TicketSold(msg.sender, newTicketId);
 
         return true;
+    }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId),"URI query for nonexistent token");
+        return eventImageURL;
     }
 
     function remainingTickets() external view returns (uint256) {
