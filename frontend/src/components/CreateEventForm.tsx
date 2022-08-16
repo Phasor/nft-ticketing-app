@@ -5,6 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import FactoryABI from '../FactoryABI.json';
 import { eventFactoryAddress } from '../eventFactoryContractAddress';
+import nftUpload from '../hooks/nftUpload';
 
 export interface FormData {
     eventName: string;
@@ -51,6 +52,7 @@ export default function CreateEventForm() {
             const passedYear = Number(`20${dataForm.eventDate.slice(6,8)}`);
             const date = new Date(passedYear,passedMonth,passedDay);
             const eventPrice = ethers.utils.parseEther(dataForm.price);
+            const image_IPFS_URL = await nftUpload(dataForm.file);
             console.log(`DateObj: ${date}`)
             const dateTime = date.getTime();
             console.log(`Datetime: ${dateTime}`);
