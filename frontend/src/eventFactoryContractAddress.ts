@@ -1,1 +1,1 @@
-export const eventFactoryAddress = "0x3a18f810805b296eaA2F93F08FB337BCEcaD7f5e";
+export const eventFactoryAddress = "0x5b218011C8b0D4310F56775609ca236cA7a5037E";

@@ -55,6 +55,10 @@ contract EventContractFactory {
         require(sent, "failed to withdraw");
     }
 
+    function getNumOfEvents() public view returns (uint256) {
+        return eventAddresses.length;
+    }
+
     modifier onlyAdmin() {
         require(msg.sender == admin, "must be admin");
         _;

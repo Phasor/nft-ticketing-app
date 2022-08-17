@@ -5,6 +5,11 @@ import Hero from '../components/Hero';
 import "../css/App.css"
 import { Link } from 'react-router-dom';
 // import eventData from '../MockEventData.json'
+import useContract from '../hooks/useContract';
+import FactoryABI from '../FactoryABI.json';
+import EventContractABI from '../EventContractABI.json';
+import { eventFactoryAddress } from '../eventFactoryContractAddress';
+import { ethers } from 'ethers';
 
 export interface HomeEventProp {
     contractAddress: string;
@@ -30,8 +35,33 @@ const Home = () => {
     imageUrl: '',
   }])
 
+const factoryContract = useContract(eventFactoryAddress, FactoryABI.abi);
+const allEvents = [];
+
+async function getAllEventAddresses(){
+    const numEvents = await factoryContract.getNumOfEvents();
+    for (let i = 0; i < numEvents; i++) {
+      var address = await factoryContract.eventAddresses(i);
+      allEvents.push(address);
+  }
+}
+
+async function getAllImages(listOfAddresses: Array<string>){
+    for (let i = 0; i < listOfAddresses.length;i++){
+        var address = listOfAddresses[i];
+        
+    }
+}
+
   useEffect(() => {
     const fetchData = async () => {
+        // iterate through eventAddresses contracts in Factory contract
+        getAllEventAddresses();
+        // get eventImageURL for each event contract
+
+        // fetch each one
+        // store locally
+
       const data = await fetch(`http://localhost:4000/events`, {
           method: "GET",
       })
